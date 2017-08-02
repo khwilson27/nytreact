@@ -10,32 +10,22 @@ var Search = React.createClass({
     render: function () {
 
         return (
-            <div className="container">
-                {/* Panel Heading */}
-                <div className="panel panel-default">
-                    <div className="panel-heading">
-                        <h3 className="panel-title">Search</h3>
-                    </div>
-                    {/* Panel body & Beginning of form */}
-                    <div className="panel-body">
-                        <form>
-                            <div className="form-group">
-                                <label htmlFor="topic">Topic</label>
-                                <input type="email" className="form-control" id="newsTopic" placeholder="Enter News Topic" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="start-year">Start Year</label>
-                                <input type="text" className="form-control" id="startYear" placeholder="Start Year" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="end-year">End Year</label>
-                                <input type="text" className="form-control" id="endYear" placeholder="End Year" />
-                            </div>
-                            <button type="submit" className="btn btn-default">Submit</button>
-                        </form>
+            // <!-- This row will handle all of the retrieved articles -->
+            <div className="row">
+                <div className="col-sm-12">
+                    <br />
+                    {/* <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved --> */}
+                    <div className="panel panel-primary">
+                        {/* <!-- Panel Heading for the retrieved articles box --> */}
+                        <div className="panel-heading">
+                            <h3 className="panel-title"><strong><i className="fa fa-table"></i>   Top Articles</strong></h3>
+                        </div>
+                        {/* <!-- This main panel will hold each of the resulting articles --> */}
+                        <div className="panel-body" id="well-section">
+                        </div>
                     </div>
                 </div>
-            </div> // Closes container
+            </div>
         );
     }
 });
