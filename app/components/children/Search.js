@@ -1,13 +1,15 @@
 // Include React
-var React = require("react");
+import React from "react";
 // Including the Link component from React Router to navigate within our application without full page reloads
-var Link = require("react-router").Link;
+const Link = require("react-router").Link;
 
 // Create the Main component
-var Search = React.createClass({
+class Search extends React.Component {
 
     // Here we render the component
-    render: function () {
+    render() {
+
+        console.log(this.props.searchData);
 
         return (
             // <!-- This row will handle all of the retrieved articles -->
@@ -22,13 +24,27 @@ var Search = React.createClass({
                         </div>
                         {/* <!-- This main panel will hold each of the resulting articles --> */}
                         <div className="panel-body" id="well-section">
+
+                            {this.props.searchData.map((article, i) => {
+                                return (
+                                    <div key={article._id} className="well" id={article._id}>
+                                        <h3 className="articleHeadline">
+                                            <span className='label label-primary'>{i+1}</span>
+                                            <strong>{article.headline.main || ""}</strong>
+                                        </h3>
+                                        <h5>{article.byline.original}</h5>
+                                        <h5>{article.pub_date}</h5>
+                                        <a href={article.web_url}> {article.web_url} </a>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
             </div>
         );
     }
-});
+};
 
 // Export the component back for use in other files
 module.exports = Search;

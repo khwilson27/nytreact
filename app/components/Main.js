@@ -1,18 +1,71 @@
 // Include React
-var React = require("react");
+import React from "react";
 // Including the Link component from React Router to navigate within our application without full page reloads
-var Link = require("react-router").Link;
+const Link = require("react-router").Link;
+import axios from "axios";
+
 
 // Create the Main Component
-var Main = React.createClass({
+class Main extends React.Component {
 
-  // Here we set a generic state associated with the number of clicks
-  // getInitialState: function () {
-  //   return {
-  //     // clicks: 0,
-  //     // clickID: "Main"
-  //   };
-  // },
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.state.searchKey = "";
+    this.state.endYear = "";
+    this.state.beginYear = "";
+    this.state.searchData = [];
+    this.state.savedArticles = [];
+
+    this.searchSubmit = this.searchSubmit.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
+  searchSubmit(event) {
+    event.preventDefault();
+
+    const searchKeyFormVal = document.getElementById("search-term").value;
+    const beginYearFormVal = document.getElementById("start-year").value || "";
+    const endYearFormVal = document.getElementById("end-year").value || "";
+
+    console.log(searchKeyFormVal, beginYearFormVal, endYearFormVal);
+
+    this.setState({
+      searchKey: searchKeyFormVal,
+      endYear: endYearFormVal,
+      beginYear: beginYearFormVal
+    })
+  }
+
+  handleSearch() {
+    // Define search params
+    const paramsGet = {
+      "api-key": "915d7986df92477680a1da6511ab82c1",
+      "q": this.state.searchKey
+    };
+
+    if (this.state.beginYear.length > 0) {
+      paramsGet.begin_date = this.state.beginYear + "0101";
+    };
+
+    if (this.state.endYear.length > 0) {
+      paramsGet.end_date = this.state.endYear + "1231";
+    };
+
+    // NYT Get search results
+    axios.get("https://api.nytimes.com/svc/search/v2/articlesearch.json", {
+      params: paramsGet
+    })
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          "searchData": response.data.response.docs
+        })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   // //  On load display the number of clicks
   // componentDidMount: function () {
@@ -32,20 +85,19 @@ var Main = React.createClass({
   //       console.log("Saved clicks", newClicks);
   //     }.bind(this));
   // },
-  // // Whenever our component updates, the code inside componentDidUpdate is run
-  // componentDidUpdate: function (prevState) {
-  //   console.log("COMPONENT UPDATED");
 
-  //   // We will check if the click count has changed...
-  //   if (prevState.clicks !== this.state.clicks) {
+  // Whenever our component updates, the code inside componentDidUpdate is run
+  componentDidUpdate(prevProps, prevState) {
+    console.log("COMPONENT UPDATED");
 
-  //     // If it does, then update the clickcount in MongoDB
-  //     helpers.saveClicks({ clickID: this.state.clickID, clicks: this.state.clicks })
-  //       .then(function () {
-  //         console.log("Posted to MongoDB");
-  //       });
-  //   }
-  // },
+    console.log(prevState.searchKey, this.state.searchKey);
+    // We will check if the click count has changed...
+    if (prevState.searchKey !== this.state.searchKey) {
+      this.handleSearch();
+    } else {
+      console.log("searched articles updated!");
+    }
+  }
   // // Whenever the button is clicked we'll use setState to add to the clickCounter
   // // Note the syntax for setting the state
   // handleClick: function () {
@@ -59,7 +111,14 @@ var Main = React.createClass({
   // },
 
   // Here we render the function
-  render: function () {
+  render() {
+
+    const childrenWithProps = React.cloneElement(this.props.children, { 
+      searchData: this.state.searchData,
+      savedArticles: this.state.savedArticles
+     });
+
+
     return (
 
       //  <!--Main Bootstrap Search -- >
@@ -86,15 +145,14 @@ var Main = React.createClass({
                     <input type="text" className="form-control" id="search-term" />
                   </div>
                   {/* <!-- Here we capture the number of records that the user wants to retrieve  --> */}
-                  <div className="form-group">
+                  {/* <div className="form-group">
                     <label htmlFor="pwd">Number of Records to Retrieve:</label>
                     <select className="form-control" id="num-records-select" defaultValue="5">
                       <option value="1">1</option>
-                      {/* <!-- Setting the option for 5 as default --> */}
                       <option value="5">5</option>
                       <option value="10">10</option>
                     </select>
-                  </div>
+                  </div>   */}
                   {/* <!-- Here we capture the Start Year Parameter--> */}
                   <div className="form-group">
                     <label htmlFor="start-year">Start Year (Optional):</label>
@@ -106,7 +164,7 @@ var Main = React.createClass({
                     <input type="text" className="form-control" id="end-year" />
                   </div>
                   {/* <!-- Here we have our final submit button --> */}
-                  <button type="submit" className="btn btn-default" id="run-search"><i className="fa fa-search"></i> Search</button>
+                  <button type="submit" onClick={this.searchSubmit} className="btn btn-default" id="run-search"><i className="fa fa-search"></i> Search</button>
                   <button type="button" className="btn btn-default" id="clear-all"><i className="fa fa-trash"></i> Clear Results</button>
                 </form>
               </div>
@@ -117,7 +175,7 @@ var Main = React.createClass({
         <div>
 
           {/* Added this.props.children to dump all of the child components into place */}
-          {this.props.children}
+          {childrenWithProps}
 
         </div>
 
@@ -133,6 +191,6 @@ var Main = React.createClass({
       </div>
     );
   }
-});
+};
 
 module.exports = Main;

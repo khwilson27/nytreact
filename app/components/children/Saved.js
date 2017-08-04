@@ -1,9 +1,9 @@
 // Include React
-var React = require("react");
+import React from "react";
 // Including the Link component from React Router to navigate within our application without full page reloads
-var Link = require("react-router").Link;
+const Link = require("react-router").Link;
 
-var Saved = React.createClass({
+class Saved extends React.Component {
 
   // // GrandChild has a state that follows the number of clicks
   // getInitialState: function() {
@@ -12,7 +12,7 @@ var Saved = React.createClass({
   //   };
   // },
   
-  render: function() {
+  render() {
     return (
  
       <div className="panel panel-primary">
@@ -29,7 +29,7 @@ var Saved = React.createClass({
 
     );
   }
-});
+};
 
 
 // Export the component back for use in other files
