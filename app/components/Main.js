@@ -19,6 +19,7 @@ class Main extends React.Component {
 
     this.searchSubmit = this.searchSubmit.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleSave = this.handleSave.bind(this);
   }
 
   searchSubmit(event) {
@@ -100,9 +101,25 @@ class Main extends React.Component {
   }
   // // Whenever the button is clicked we'll use setState to add to the clickCounter
   // // Note the syntax for setting the state
-  // handleClick: function () {
-  //   this.setState({ clicks: this.state.clicks + 1 });
-  // },
+  handleSave(title, date, url) {
+    axios.post("/save", {
+      params: {
+        title: title,
+        date: date,
+        url: url
+      }
+    })
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          "savedArticles": response.data
+        })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+  }
 
   // // Whenever the button is clicked we'll use setState to reset the clickCounter
   // // This will reset the clicks -- and it will be passed ALL children
@@ -113,10 +130,11 @@ class Main extends React.Component {
   // Here we render the function
   render() {
 
-    const childrenWithProps = React.cloneElement(this.props.children, { 
+    const childrenWithProps = React.cloneElement(this.props.children, {
       searchData: this.state.searchData,
-      savedArticles: this.state.savedArticles
-     });
+      savedArticles: this.state.savedArticles,
+      handleSave: this.handleSave
+    });
 
 
     return (
@@ -165,7 +183,6 @@ class Main extends React.Component {
                   </div>
                   {/* <!-- Here we have our final submit button --> */}
                   <button type="submit" onClick={this.searchSubmit} className="btn btn-default" id="run-search"><i className="fa fa-search"></i> Search</button>
-                  <button type="button" className="btn btn-default" id="clear-all"><i className="fa fa-trash"></i> Clear Results</button>
                 </form>
               </div>
             </div>

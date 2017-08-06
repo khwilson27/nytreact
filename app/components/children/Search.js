@@ -6,10 +6,24 @@ const Link = require("react-router").Link;
 // Create the Main component
 class Search extends React.Component {
 
+    constructor(props) {
+        super(props);
+    }
+
+    feedHandleSave(event) {
+        const target = event.target;
+        
+        const title = target.dataset.title;
+        const date = target.dataset.date;
+        const url = target.dataset.url;
+
+        console.log(this.props.searchData);
+        this.props.handleSave(title, date, url);
+    }
     // Here we render the component
     render() {
 
-        console.log(this.props.searchData);
+        // console.log(this.props.searchData);
 
         return (
             // <!-- This row will handle all of the retrieved articles -->
@@ -32,9 +46,14 @@ class Search extends React.Component {
                                             <span className='label label-primary'>{i+1}</span>
                                             <strong>{article.headline.main || ""}</strong>
                                         </h3>
-                                        <h5>{article.byline.original}</h5>
-                                        <h5>{article.pub_date}</h5>
-                                        <a href={article.web_url}> {article.web_url} </a>
+
+                                        {article.pub_date && <h5>{article.pub_date}</h5>}
+                                        {article.web_url && <a href={article.web_url}> {article.web_url} </a>}
+
+                                        <br/>
+                                        <br/>
+
+                                        <button type="button" onClick={this.feedHandleSave} className="btn btn-success saveBtn" data-title={article.headline.main} data-date={article.pub_date} data-url={article.web_url}>Save</button>
                                     </div>
                                 );
                             })}
